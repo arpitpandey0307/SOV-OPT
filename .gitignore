@@ -45,3 +45,13 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Local benchmark datasets (5+ GB, never committed)
+Dataset/
+
+# Backend runtime state
+backend/.cache/
+backend/.data/
+
+# Tool binaries
+tools/emps/*.exe
