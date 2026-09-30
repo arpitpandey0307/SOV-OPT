@@ -11,6 +11,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(sovopt_tests
     test_api.cpp
+    test_lp.cpp
 )
 target_link_libraries(sovopt_tests PRIVATE sovopt::sovopt GTest::gtest_main)
 
