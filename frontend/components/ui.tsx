@@ -4,14 +4,15 @@ import type { HealthStatus } from "@/lib/api";
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-[#f6f5f1] hover:bg-accent-ink border border-accent",
-  secondary: "bg-panel text-ink border border-rule-strong hover:border-ink-3",
+  primary:
+    "text-white border border-white/10 bg-[linear-gradient(120deg,#ff9a3c,#ff4d8d_35%,#7c5cff_70%,#22d3ee)] bg-[length:200%_auto] hover:bg-[position:100%_center] shadow-[0_0_28px_-4px_rgba(124,92,255,0.65)] hover:shadow-[0_0_36px_-2px_rgba(255,77,141,0.7)] transition-all duration-500",
+  secondary: "bg-white/5 text-ink border border-white/15 hover:bg-white/10 hover:border-white/30 backdrop-blur",
   ghost: "text-ink-2 hover:text-ink border border-transparent",
-  danger: "bg-panel text-risk border border-rule-strong hover:border-risk",
+  danger: "bg-risk-wash text-risk border border-risk/40 hover:border-risk",
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-[3px] px-4 h-10 text-sm font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
+  "inline-flex items-center justify-center gap-2 rounded-xl px-5 h-10 text-sm font-semibold transition-colors disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap active:scale-[0.98]";
 
 export function Button({
   variant = "primary",
@@ -63,7 +64,7 @@ export function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-[2px] px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ${statusStyle[tone]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${statusStyle[tone]} ${className}`}
     >
       {glyph && statusGlyph[tone] && (
         <span aria-hidden className="text-[0.6rem] leading-none">
@@ -96,7 +97,7 @@ export function Stat({
   return (
     <div className={className}>
       <div className="text-xs text-ink-3">{label}</div>
-      <div className="tabular mt-1 font-mono text-xl text-ink">{value}</div>
+      <div className="tabular mt-1 font-mono text-2xl font-medium text-ink">{value}</div>
       {sub && <div className="mt-0.5 text-xs text-ink-3">{sub}</div>}
     </div>
   );
@@ -108,7 +109,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
 
 export function ErrorState({ title = "Something went wrong", message, action }: { title?: string; message: string; action?: React.ReactNode }) {
   return (
-    <div role="alert" className="border border-rule bg-panel px-5 py-6">
+    <div role="alert" className="rounded-xl border border-risk/30 bg-panel px-5 py-6">
       <div className="text-sm font-medium text-risk">{title}</div>
       <p className="mt-1 max-w-prose text-sm text-ink-2">{message}</p>
       {action && <div className="mt-4">{action}</div>}
@@ -118,7 +119,7 @@ export function ErrorState({ title = "Something went wrong", message, action }: 
 
 export function EmptyState({ title, message, action }: { title: string; message: string; action?: React.ReactNode }) {
   return (
-    <div className="border border-dashed border-rule-strong px-5 py-10 text-center">
+    <div className="rounded-xl border border-dashed border-rule-strong bg-white/[0.02] px-5 py-10 text-center">
       <div className="text-sm font-medium text-ink">{title}</div>
       <p className="mx-auto mt-1 max-w-md text-sm text-ink-3">{message}</p>
       {action && <div className="mt-4 flex justify-center">{action}</div>}
@@ -139,5 +140,5 @@ export function SectionHeading({ title, description, actions }: { title: string;
 }
 
 export function Panel({ className = "", children }: { className?: string; children: React.ReactNode }) {
-  return <section className={`border border-rule bg-panel ${className}`}>{children}</section>;
+  return <section className={`rounded-xl border border-rule bg-panel ${className}`}>{children}</section>;
 }

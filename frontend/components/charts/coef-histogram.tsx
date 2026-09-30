@@ -32,7 +32,7 @@ export function CoefHistogram({ data, title }: { data: { exp: number; count: num
                 className="w-full rounded-t-[3px]"
                 style={{
                   height: b.count ? Math.max(2, (Math.log1p(b.count) / Math.log1p(max)) * H) : 0,
-                  background: hover === null || hover === i ? "var(--series-1)" : "#9ec5f4",
+                  background: hover === null || hover === i ? "var(--series-1)" : "rgba(34,211,238,0.35)",
                 }}
               />
             </div>

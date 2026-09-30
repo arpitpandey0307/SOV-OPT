@@ -26,7 +26,7 @@ function Spark({ data, unit, max, title }: { data: [number, number | null][]; un
       tooltip: baseTooltip({ valueFormatter: (v: number) => `${v.toFixed(unit === "%" ? 0 : 1)} ${unit}` }),
       xAxis: baseAxis({ type: "time", splitLine: { show: false }, axisLabel: { show: false } }),
       yAxis: baseAxis({ type: "value", min: 0, max, splitNumber: 3, axisLabel: { color: chartTheme.ink3, fontSize: 10 } }),
-      series: [{ name: title, type: "line", showSymbol: false, data, lineStyle: { width: 2, color: chartTheme.s1 }, itemStyle: { color: chartTheme.s1 }, areaStyle: { color: "rgba(28,92,171,0.07)" } }],
+      series: [{ name: title, type: "line", showSymbol: false, data, lineStyle: { width: 2, color: chartTheme.s1 }, itemStyle: { color: chartTheme.s1 }, areaStyle: { color: "rgba(34,211,238,0.12)" } }],
     }),
     [data, unit, max, title],
   );

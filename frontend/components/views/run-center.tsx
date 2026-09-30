@@ -94,7 +94,7 @@ export function RunCenterView({ runId }: { runId: string }) {
                 </Button>
               ) : (
                 <>
-                  <a href={api.evidenceUrl(runId)} download className="inline-flex h-10 items-center rounded-[3px] border border-rule-strong bg-panel px-4 text-sm font-medium text-ink hover:border-ink-3">
+                  <a href={api.evidenceUrl(runId)} download className="inline-flex h-10 items-center rounded-lg border border-rule-strong bg-panel px-4 text-sm font-medium text-ink hover:border-ink-3">
                     Download evidence
                   </a>
                   <NewRunDialog collection={r.collection} name={r.instance} kind={r.kind}>
@@ -119,7 +119,7 @@ export function RunCenterView({ runId }: { runId: string }) {
             <Tabs.Trigger
               key={t}
               value={t}
-              className="-mb-px shrink-0 border-b-2 border-transparent px-3 pb-2.5 text-sm text-ink-2 hover:text-ink data-[state=active]:border-ink data-[state=active]:font-medium data-[state=active]:text-ink"
+              className="-mb-px shrink-0 border-b-2 border-transparent px-3 pb-2.5 text-sm text-ink-2 hover:text-ink data-[state=active]:border-cyan data-[state=active]:font-medium data-[state=active]:text-ink"
             >
               {TAB_LABEL[t]}
               {t === "numerics" && derived.numerical.length > 0 && (
@@ -601,7 +601,7 @@ function GpuTab({ d, run }: { d: Derived; run?: Run }) {
       tooltip: baseTooltip({ valueFormatter: (v: number) => `${v.toFixed(1)}%` }),
       xAxis: baseAxis({ type: "value", name: "seconds", min: 0, splitLine: { show: false } }),
       yAxis: baseAxis({ type: "value", min: 0, max: 100, axisLabel: { color: chartTheme.ink3, fontSize: 11, formatter: "{value}%" } }),
-      series: [{ name: "GPU utilization", type: "line", showSymbol: false, data: d.gpu.map((g) => [g.t, g.utilization]), lineStyle: { width: 2, color: chartTheme.s1 }, itemStyle: { color: chartTheme.s1 }, areaStyle: { color: "rgba(28,92,171,0.08)" } }],
+      series: [{ name: "GPU utilization", type: "line", showSymbol: false, data: d.gpu.map((g) => [g.t, g.utilization]), lineStyle: { width: 2, color: chartTheme.s1 }, itemStyle: { color: chartTheme.s1 }, areaStyle: { color: "rgba(34,211,238,0.12)" } }],
     }),
     [d.gpu],
   );
@@ -676,7 +676,7 @@ function Evidence({ run }: { run?: Run }) {
           </dl>
         </section>
         <div className="flex flex-wrap gap-2">
-          <a href={api.evidenceUrl(run.id)} download className="inline-flex h-10 items-center rounded-[3px] border border-accent bg-accent px-4 text-sm font-medium text-[#f6f5f1] hover:bg-accent-ink">
+          <a href={api.evidenceUrl(run.id)} download className="inline-flex h-10 items-center rounded-lg border border-accent bg-accent px-4 text-sm font-medium text-white hover:bg-accent-ink">
             Download evidence bundle
           </a>
         </div>

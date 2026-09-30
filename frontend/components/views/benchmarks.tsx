@@ -111,7 +111,7 @@ export function BenchmarksView() {
             aria-selected={s.id === suiteId}
             onClick={() => setSuiteId(s.id)}
             className={`-mb-px border-b-2 px-3 pb-2.5 text-sm ${
-              s.id === suiteId ? "border-ink font-medium text-ink" : "border-transparent text-ink-2 hover:text-ink"
+              s.id === suiteId ? "border-cyan font-medium text-ink" : "border-transparent text-ink-2 hover:text-ink"
             }`}
           >
             {s.title}
@@ -152,7 +152,7 @@ export function BenchmarksView() {
         ) : !models.data ? (
           <Skeleton className="h-80" />
         ) : (
-          <div className="overflow-x-auto border border-rule bg-panel">
+          <div className="overflow-x-auto rounded-xl border border-rule bg-panel">
             <table className="w-full min-w-[860px] text-sm">
               <thead>
                 <tr className="border-b border-rule text-left text-xs text-ink-3">

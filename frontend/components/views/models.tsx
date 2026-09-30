@@ -82,7 +82,7 @@ export function ModelsView() {
               aria-selected={active}
               onClick={() => set({ collection: c.id || null, page: null })}
               className={`-mb-px border-b-2 px-3 pb-2.5 text-sm ${
-                active ? "border-ink font-medium text-ink" : "border-transparent text-ink-2 hover:text-ink"
+                active ? "border-cyan font-medium text-ink" : "border-transparent text-ink-2 hover:text-ink"
               }`}
             >
               {c.title}
@@ -103,7 +103,7 @@ export function ModelsView() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="e.g. glass4, pilot, qafiro"
-            className="mt-1 h-9 w-full rounded-[3px] border border-rule-strong bg-panel px-3 text-sm focus:border-accent focus:outline-none"
+            className="mt-1 h-9 w-full rounded-lg border border-rule-strong bg-panel px-3 text-sm focus:border-accent focus:outline-none"
           />
         </div>
         <div>
@@ -114,7 +114,7 @@ export function ModelsView() {
             id="model-kind"
             value={kind}
             onChange={(e) => set({ kind: e.target.value || null, page: null })}
-            className="mt-1 block h-9 rounded-[3px] border border-rule-strong bg-panel px-2 text-sm focus:border-accent focus:outline-none"
+            className="mt-1 block h-9 rounded-lg border border-rule-strong bg-panel px-2 text-sm focus:border-accent focus:outline-none"
           >
             <option value="">Any</option>
             <option value="LP">LP</option>
@@ -131,7 +131,7 @@ export function ModelsView() {
             id="model-sort"
             value={sort}
             onChange={(e) => set({ sort: e.target.value === "name" ? null : e.target.value, page: null })}
-            className="mt-1 block h-9 rounded-[3px] border border-rule-strong bg-panel px-2 text-sm focus:border-accent focus:outline-none"
+            className="mt-1 block h-9 rounded-lg border border-rule-strong bg-panel px-2 text-sm focus:border-accent focus:outline-none"
           >
             <option value="name">Name</option>
             <option value="nnz">Nonzeros</option>
@@ -157,7 +157,7 @@ export function ModelsView() {
             }
           />
         ) : (
-          <div className="overflow-x-auto border border-rule bg-panel">
+          <div className="overflow-x-auto rounded-xl border border-rule bg-panel">
             <table className="w-full min-w-[760px] text-sm">
               <thead>
                 <tr className="border-b border-rule text-left text-xs text-ink-3">
@@ -173,7 +173,7 @@ export function ModelsView() {
               </thead>
               <tbody className={list.isPlaceholderData ? "opacity-60" : ""}>
                 {list.data.items.map((m) => (
-                  <tr key={`${m.collection}/${m.name}`} className="border-b border-rule last:border-0 hover:bg-sunken/60">
+                  <tr key={`${m.collection}/${m.name}`} className="border-b border-rule last:border-0 transition-colors hover:bg-white/[0.04]">
                     <td className="px-4 py-2.5">
                       <Link href={`/models/${m.collection}/${m.name}`} className="font-medium text-ink hover:text-accent">
                         {m.name}
@@ -257,8 +257,8 @@ function UploadDialog({ defaultOpen, onClosed }: { defaultOpen: boolean; onClose
         <Button>Upload a model</Button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-ink/25" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 border border-rule-strong bg-paper p-6 focus:outline-none">
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/15 bg-[#0a0f22]/95 p-6 shadow-[0_40px_120px_-20px_rgba(124,92,255,0.5)] focus:outline-none">
           <Dialog.Title className="text-lg font-semibold">Upload a model</Dialog.Title>
           <Dialog.Description className="mt-1 text-sm text-ink-2">
             MPS or QPS files up to 200 MB, plain or gzip compressed. The file is profiled as soon as it arrives.

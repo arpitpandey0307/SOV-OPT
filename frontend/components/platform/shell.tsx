@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "motion/react";
 import { api } from "@/lib/api";
+import { Wordmark } from "@/components/site-chrome";
 
 const NAV = [
   { href: "/overview", label: "Overview" },
@@ -27,11 +29,18 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
               href={n.href}
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
-              className={`block rounded-[3px] px-3 py-1.5 text-sm ${
-                active ? "bg-sunken font-medium text-ink" : "text-ink-2 hover:text-ink"
+              className={`relative block rounded-xl px-3 py-2 text-sm transition-colors ${
+                active ? "font-semibold text-white" : "text-ink-2 hover:bg-white/5 hover:text-ink"
               }`}
             >
-              {n.label}
+              {active && (
+                <motion.span
+                  layoutId={onNavigate ? "nav-pill-mobile" : "nav-pill"}
+                  className="absolute inset-0 rounded-xl bg-[linear-gradient(120deg,rgba(255,154,60,0.35),rgba(124,92,255,0.45),rgba(34,211,238,0.35))] shadow-[0_0_24px_-6px_rgba(124,92,255,0.8)]"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+              <span className="relative">{n.label}</span>
             </Link>
           </li>
         );
@@ -78,10 +87,8 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[220px_1fr]">
-      <aside className="sticky top-0 hidden h-screen flex-col border-r border-rule px-3 py-5 lg:flex">
-        <Link href="/" className="px-3 text-[15px] font-semibold tracking-tight text-ink">
-          SOV-OPT
-        </Link>
+      <aside className="sticky top-0 hidden h-screen flex-col border-r border-white/10 bg-white/[0.02] px-3 py-5 backdrop-blur-xl lg:flex">
+        <Wordmark className="px-3" />
         <nav aria-label="Workspace" className="mt-8 flex-1">
           <NavLinks />
         </nav>
@@ -90,18 +97,16 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-rule bg-paper/95 px-4 backdrop-blur-sm lg:hidden">
-        <Link href="/" className="text-[15px] font-semibold tracking-tight">
-          SOV-OPT
-        </Link>
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-[#060913]/80 px-4 backdrop-blur-xl lg:hidden">
+        <Wordmark />
         <Dialog.Root open={open} onOpenChange={setOpen}>
-          <Dialog.Trigger className="h-9 rounded-[3px] border border-rule-strong px-3 text-sm text-ink">Menu</Dialog.Trigger>
+          <Dialog.Trigger className="h-9 rounded-lg border border-rule-strong px-3 text-sm text-ink">Menu</Dialog.Trigger>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-40 bg-ink/20" />
-            <Dialog.Content className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-rule bg-paper p-5 focus:outline-none">
+            <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" />
+            <Dialog.Content className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-white/10 bg-[#0a0f22] p-5 focus:outline-none">
               <div className="flex items-center justify-between">
                 <Dialog.Title className="text-sm font-semibold">Workspace</Dialog.Title>
-                <Dialog.Close className="h-9 rounded-[3px] px-2 text-sm text-ink-2 hover:text-ink">Close</Dialog.Close>
+                <Dialog.Close className="h-9 rounded-lg px-2 text-sm text-ink-2 hover:text-ink">Close</Dialog.Close>
               </div>
               <Dialog.Description className="sr-only">Workspace navigation</Dialog.Description>
               <nav aria-label="Workspace" className="mt-6 flex-1">
@@ -132,10 +137,10 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-rule pb-6">
+    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-6">
       <div className="min-w-0">
         {eyebrow && <div className="eyebrow mb-2">{eyebrow}</div>}
-        <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-[28px]">{title}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{title}</h1>
         {description && <div className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-2">{description}</div>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}

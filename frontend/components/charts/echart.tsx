@@ -10,14 +10,14 @@ import type { EChartsCoreOption } from "echarts/core";
 echarts.use([LineChart, BarChart, GridComponent, LegendComponent, TooltipComponent, MarkLineComponent, CanvasRenderer]);
 
 export const chartTheme = {
-  ink: "#1b1a17",
-  ink2: "#4a4843",
-  ink3: "#7a776f",
-  grid: "#e7e4dc",
-  axis: "#c9c5ba",
-  panel: "#fbfaf7",
-  s1: "#1c5cab",
-  s2: "#d95926",
+  ink: "#eef2ff",
+  ink2: "#b6bfd9",
+  ink3: "#7c86a6",
+  grid: "rgba(148,163,230,0.10)",
+  axis: "rgba(148,163,230,0.28)",
+  panel: "rgba(12,17,34,0.95)",
+  s1: "#22d3ee",
+  s2: "#ff9a3c",
   font: "var(--font-plex-sans), system-ui, sans-serif",
 };
 

@@ -36,8 +36,8 @@ export function RunsView() {
               key={x.id}
               onClick={() => setFilter(x.id)}
               aria-pressed={filter === x.id}
-              className={`h-8 rounded-[3px] border px-3 text-sm ${
-                filter === x.id ? "border-ink bg-ink text-paper" : "border-rule-strong bg-panel text-ink-2 hover:text-ink"
+              className={`h-8 rounded-lg border px-3 text-sm ${
+                filter === x.id ? "border-transparent bg-[linear-gradient(120deg,#7c5cff,#22d3ee)] text-white" : "border-rule-strong bg-panel text-ink-2 hover:text-ink"
               }`}
             >
               {x.label}

@@ -34,7 +34,7 @@ export function VerdictBadge({ verdict }: { verdict?: string | null }) {
 
 export function RunsTable({ runs, showModel = true }: { runs: Run[]; showModel?: boolean }) {
   return (
-    <div className="overflow-x-auto border border-rule bg-panel">
+    <div className="overflow-x-auto rounded-xl border border-rule bg-panel">
       <table className="w-full min-w-[720px] text-sm">
         <thead>
           <tr className="border-b border-rule text-left text-xs text-ink-3">
@@ -50,7 +50,7 @@ export function RunsTable({ runs, showModel = true }: { runs: Run[]; showModel?:
         </thead>
         <tbody>
           {runs.map((r) => (
-            <tr key={r.id} className="border-b border-rule whitespace-nowrap last:border-0 hover:bg-sunken/60">
+            <tr key={r.id} className="border-b border-rule whitespace-nowrap last:border-0 transition-colors hover:bg-white/[0.04]">
               <td className="px-4 py-2.5">
                 <Link href={`/runs/${r.id}`} className="font-mono text-[13px] text-accent hover:text-accent-ink">
                   {r.id.replace("run_", "")}
@@ -103,7 +103,7 @@ function Field({ label: l, hint, children, htmlFor }: { label: string; hint?: st
 }
 
 const inputCls =
-  "h-9 w-full rounded-[3px] border border-rule-strong bg-panel px-2.5 text-sm text-ink tabular focus:border-accent focus:outline-none";
+  "h-9 w-full rounded-lg border border-rule-strong bg-panel px-2.5 text-sm text-ink tabular focus:border-accent focus:outline-none";
 
 export function NewRunDialog({
   collection,
@@ -150,8 +150,8 @@ export function NewRunDialog({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-ink/25" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-h-[90vh] w-[calc(100vw-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto border border-rule-strong bg-paper p-6 focus:outline-none">
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-h-[90vh] w-[calc(100vw-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-white/15 bg-[#0a0f22]/95 p-6 shadow-[0_40px_120px_-20px_rgba(124,92,255,0.5)] focus:outline-none">
           <Dialog.Title className="text-lg font-semibold">Solve {name}</Dialog.Title>
           <Dialog.Description className="mt-1 text-sm text-ink-2">
             The run is queued on the solver worker. You can follow it live and cancel it at any time.
@@ -170,7 +170,7 @@ export function NewRunDialog({
                 {ALGORITHMS.map((a) => (
                   <label
                     key={a.value}
-                    className={`flex cursor-pointer items-start gap-3 rounded-[3px] border px-3 py-2 ${
+                    className={`flex cursor-pointer items-start gap-3 rounded-lg border px-3 py-2 ${
                       cfg.algorithm === a.value ? "border-accent bg-accent-wash/50" : "border-rule hover:border-rule-strong"
                     }`}
                   >

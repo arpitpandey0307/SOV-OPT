@@ -151,7 +151,7 @@ export function ModelStudioView({ collection, name }: { collection: string; name
               <Tabs.Trigger
                 key={t.id}
                 value={t.id}
-                className="-mb-px border-b-2 border-transparent px-3 pb-2.5 text-sm text-ink-2 hover:text-ink data-[state=active]:border-ink data-[state=active]:font-medium data-[state=active]:text-ink"
+                className="-mb-px border-b-2 border-transparent px-3 pb-2.5 text-sm text-ink-2 hover:text-ink data-[state=active]:border-cyan data-[state=active]:font-medium data-[state=active]:text-ink"
               >
                 {t.label}
                 {t.id === "health" && a.health.some((h) => h.status === "warn" || h.status === "risk") && (
