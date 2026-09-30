@@ -1,0 +1,33 @@
+# Profile A (single machine) deployment.
+#   docker compose -f deploy/docker-compose.yml up --build
+# Benchmark files are mounted read-only from ../Dataset; runs and uploads persist in a named volume.
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/backend.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      SOVOPT_CORS_ORIGINS: http://localhost:3000
+      SOVOPT_DATA_DIR: /data
+      SOVOPT_CACHE_DIR: /data/cache
+    volumes:
+      - ../Dataset:/app/Dataset:ro
+      - sovopt-data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/frontend.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  sovopt-data:

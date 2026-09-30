@@ -294,8 +294,9 @@ function RunMeta({ run, stream, algorithm }: { run: Run; stream: StreamState; al
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content sideOffset={6} className="z-50 max-w-xs border border-rule-strong bg-panel px-3 py-2 text-xs leading-relaxed text-ink-2">
-            Preview engine. Model reading, presolve counts, hashes and hardware data are measured. Iteration traces
-            are simulated from the model profile until the native C++ and CUDA worker is connected.
+            {run.engine === "sovopt-native"
+              ? "Native SOV-OPT core. Every iteration, objective and dual value on this page comes from the C++ solver, and the verdict comes from the independent exact-arithmetic verifier."
+              : "Preview engine, used for problem classes the native core does not solve yet. Model reading, hashes and hardware data are measured; iteration traces are simulated from the model profile."}
           </Tooltip.Content>
         </Tooltip.Portal>
       </Tooltip.Root>

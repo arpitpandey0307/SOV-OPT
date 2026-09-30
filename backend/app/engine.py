@@ -1,5 +1,9 @@
 """Run executor.
 
+Linear programs run on the native SOV-OPT core (app/native.py) and are checked
+by the independent verifier. The rest of this module is the preview engine,
+used for problem classes the native core does not solve yet (MILP, QP).
+
 The native SOV-OPT core (C++/CUDA, see solver/) is not wired into the control
 plane yet. Until it is, runs are executed by this preview engine, which emits
 the same event contract the native worker will emit (docs/tasks/T5): real
@@ -17,7 +21,7 @@ import math
 import random
 import time
 
-from . import config
+from . import config, native
 from .catalog import Catalog, Instance
 from .store import Store
 
@@ -66,7 +70,7 @@ class Engine:
 
         try:
             self.store.update_run(run_id, status="running", started_at=time.time())
-            emit("RUN_STARTED", engine=config.ENGINE_ID, solver_version=config.SOLVER_VERSION, configuration=cfg)
+            emit("RUN_STARTED", engine=run["engine"], solver_version=config.SOLVER_VERSION, configuration=cfg)
 
             analysis = await self._ensure_analysis(inst, emit)
             if analysis is None:
@@ -84,6 +88,10 @@ class Engine:
             emit("MODEL_LOADED", name=analysis["name"], kind=kind, sense=sense, rows=analysis["rows"],
                  cols=analysis["cols"], nnz=analysis["nnz"], integer_cols=analysis["integer_cols"],
                  quadratic_nnz=analysis["quadratic_nnz"])
+
+            if run["engine"] == native.ENGINE_ID:
+                await self._execute_native(run, inst, analysis, t0, now, emit, state)
+                return
 
             algorithm = self._dispatch(cfg, analysis, emit)
 
@@ -124,6 +132,28 @@ class Engine:
             self.store.update_run(run_id, status="failed", result_status="ERROR", elapsed=elapsed,
                                   finished_at=time.time())
             emit("RUN_FAILED", message=str(e), elapsed=elapsed)
+
+    async def _execute_native(self, run, inst, analysis, t0, now, emit, state) -> None:
+        from pathlib import Path
+
+        run_id = run["id"]
+        result = await native.execute(run_id, Path(inst.path), run["config"], analysis, t0, emit, state)
+        if result["solution"] is not None and result["status"] in ("OPTIMAL", "TIME_LIMIT", "ITERATION_LIMIT"):
+            emit("VERIFICATION_STARTED")
+            verification = await native.run_verifier(result["mps"], result["solution"])
+        elif result["status"] == "INFEASIBLE":
+            verification = {"verdict": "INFEASIBILITY_REPORTED", "checks": [],
+                            "note": "Phase 1 ended with positive infeasibility and no improving column."}
+        else:
+            verification = {"verdict": "NO_SOLUTION", "checks": []}
+        emit("VERIFICATION_COMPLETED", **verification)
+        elapsed = now()
+        self.store.update_run(
+            run_id, status="completed", result_status=result["status"], objective=result["objective"],
+            bound=result.get("bound"), gap=result.get("gap"), iterations=state["iterations"], nodes=0,
+            elapsed=elapsed, verification=verification, finished_at=time.time())
+        emit("RUN_COMPLETED", status=result["status"], objective=result["objective"], bound=result.get("bound"),
+             gap=result.get("gap"), elapsed=elapsed)
 
     async def _ensure_analysis(self, inst: Instance, emit) -> dict | None:
         a = self.catalog.analysis(inst)

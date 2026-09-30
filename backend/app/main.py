@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 from pydantic import BaseModel, Field
 
-from . import config, system
+from . import config, native, system
 from .catalog import COLLECTIONS, Catalog
 from .engine import Engine, sha256_file
 from .store import Store
@@ -68,7 +68,8 @@ def health():
 def system_info():
     return {
         "solver_version": config.SOLVER_VERSION,
-        "engine": config.ENGINE_ID,
+        "engine": native.ENGINE_ID if native.available() else config.ENGINE_ID,
+        "native_available": native.available(),
         "host": system.host(),
         "gpus": system.gpus(),
         "active_runs": engine.active(),
@@ -203,7 +204,10 @@ async def create_run(collection: str, name: str, cfg: RunConfig):
     inst = _instance_or_404(collection, name)
     if not inst.analyzable or not inst.path:
         raise HTTPException(422, "This model format cannot be read by the solver yet.")
-    run = store.create_run(collection, name, inst.kind, cfg.model_dump(), config.ENGINE_ID)
+    analysis = catalog.analysis(inst)
+    kind = analysis["kind"] if analysis else inst.kind
+    engine_id = native.ENGINE_ID if native.supports(kind) and native.available() else config.ENGINE_ID
+    run = store.create_run(collection, name, kind, cfg.model_dump(), engine_id)
     store.add_event(run["id"], 0.0, "RUN_QUEUED", {"configuration": cfg.model_dump()})
     engine.start(run, inst)
     return run
@@ -287,6 +291,7 @@ def _passport(run: dict) -> dict:
             "size_bytes": inst.size_bytes if inst else None,
         },
         "solver": {"version": config.SOLVER_VERSION, "engine": run["engine"]},
+        "verifier": (run["verification"] or {}).get("verifier"),
         "configuration": run["config"],
         "configuration_sha256": cfg_hash,
         "random_seed": run["config"].get("seed"),

@@ -37,6 +37,8 @@ COLLECTIONS = {
                        "description": "138 convex quadratic programs in QPS format."},
     "qplib": {"title": "QPLIB", "kind": "QP",
               "description": "Quadratic programming instances with published structure metadata and best known objectives."},
+    "industrial": {"title": "Industrial models", "kind": "LP",
+                   "description": "Refinery planning models built for SOV-OPT from open-literature structure, with illustrative data."},
     "uploads": {"title": "Uploaded models", "kind": "any",
                 "description": "Models uploaded to this workspace."},
 }
@@ -79,7 +81,7 @@ class Catalog:
 
     def reload(self) -> None:
         items: dict[str, Instance] = {}
-        for inst in self._load_netlib() + self._load_miplib() + self._load_maros() + self._load_qplib() + self._load_uploads():
+        for inst in self._load_netlib() + self._load_miplib() + self._load_maros() + self._load_qplib() + self._load_industrial() + self._load_uploads():
             items[inst.key] = inst
         with self._lock:
             self._items = items
@@ -176,6 +178,15 @@ class Catalog:
                         "donor": row["donor"],
                     },
                 ))
+        return out
+
+    def _load_industrial(self) -> list[Instance]:
+        out = []
+        for f in sorted((config.REPO_DIR / "models").glob("**/*.mps")):
+            ann = f.with_name(f.stem + ".annotations.json")
+            meta = json.loads(ann.read_text()) if ann.exists() else {}
+            out.append(Instance(collection="industrial", name=f.stem, path=str(f), size_bytes=f.stat().st_size,
+                                kind="LP", meta={"description": meta.get("description", "")}))
         return out
 
     def _load_uploads(self) -> list[Instance]:

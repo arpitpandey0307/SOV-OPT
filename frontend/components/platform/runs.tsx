@@ -17,6 +17,8 @@ export function RunStatusBadge({ run }: { run: Pick<Run, "status" | "result_stat
   const r = run.result_status ?? "";
   if (r === "OPTIMAL") return <Badge tone="ok" glyph>Optimal</Badge>;
   if (r === "INFEASIBLE") return <Badge tone="info" glyph>Infeasible</Badge>;
+  if (r === "UNBOUNDED") return <Badge tone="info" glyph>Unbounded</Badge>;
+  if (r === "NUMERICAL_ERROR") return <Badge tone="risk" glyph>Numerical error</Badge>;
   if (r.startsWith("TIME_LIMIT")) return <Badge tone="warn" glyph>Time limit</Badge>;
   return <Badge tone="neutral">{label(r)}</Badge>;
 }

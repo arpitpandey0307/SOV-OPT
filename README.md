@@ -42,6 +42,11 @@ See [docs/tasks/00-OVERVIEW.md](docs/tasks/00-OVERVIEW.md).
 
 Datasets: see [docs/DATASETS.md](docs/DATASETS.md).
 
+## Status
+
+See [docs/STATUS.md](docs/STATUS.md) for what is done, partial and not started, and
+[bench/reports/netlib.md](bench/reports/netlib.md) for the current SOV-OPT vs HiGHS results.
+
 ## Run the platform
 
 ```bash
@@ -56,7 +61,19 @@ cd frontend && npm install && npm run dev
 Open http://localhost:3000. Benchmark files are read from `Dataset/` at the repository root
 (git-ignored). See [docs/DATASETS.md](docs/DATASETS.md) for the expected layout.
 
+## Check everything
+
+```bash
+python scripts/check_all.py      # C++ build + tests, API/verifier/binding tests, Netlib regression, frontend build
+python bench/runner/run_suite.py --suite netlib   # full benchmark vs HiGHS, writes bench/reports/
+```
+
 ## Build the solver core
+
+Without an installed compiler (Windows or Linux): `pip install ziglang cmake ninja`, then
+`cmake --preset release-zig && cmake --build --preset release-zig`.
+
+Solve from Python: `PYTHONPATH=bindings/python python -m sovopt solve model.mps`.
 
 Requirements: CMake ≥ 3.24, Ninja, a C++20 compiler (GCC ≥ 11, Clang ≥ 14, MSVC 2022).
 The optional GPU path needs CUDA ≥ 12.8 (required for RTX 50-series / Blackwell).

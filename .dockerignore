@@ -1,0 +1,8 @@
+**/node_modules
+**/.next
+build
+Dataset
+backend/.cache
+backend/.data
+**/__pycache__
+.git

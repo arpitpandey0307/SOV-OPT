@@ -19,6 +19,9 @@ bench/data/
 # Benchmark outputs
 bench/reports/*
 !bench/reports/.gitkeep
+!bench/reports/*.md
+!bench/reports/*.json
+bench/reports/*-subset.*
 *.evidence.zip
 
 # Python
