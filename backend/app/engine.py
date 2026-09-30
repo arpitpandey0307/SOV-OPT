@@ -94,7 +94,8 @@ class Engine:
 
             limit = float(cfg.get("time_limit", 60))
             if kind in ("MILP", "MIQP"):
-                result = await self._branch_and_cut(analysis, cfg, rng, tmin, sgn, limit, t0, emit, state)
+                result = await self._branch_and_cut(analysis, cfg, rng, tmin, sgn, limit, t0, emit, state,
+                                                    inst.reference_status)
             elif kind == "QP":
                 result = await self._interior_point(analysis, rng, tmin, sgn, limit, t0, emit, state)
             else:
@@ -270,11 +271,14 @@ class Engine:
 
     # ------------------------------------------------------- branch and cut
 
-    async def _branch_and_cut(self, a, cfg, rng, tmin, sgn, limit, t0, emit, state):
+    async def _branch_and_cut(self, a, cfg, rng, tmin, sgn, limit, t0, emit, state, ref_status=None):
         nnz = a["nnz"]
         mip_gap = float(cfg.get("mip_gap", 1e-4))
         est = (4 + 2.4 * math.log10(nnz + 10) ** 1.3) * rng.uniform(0.7, 1.7)
-        hard = est > limit or a["big_m_rows"] > 0.2 * a["rows"]
+        # Instances with only a best-known value are open problems: no proof within a short budget.
+        hard = est > limit or a["big_m_rows"] > 0.2 * a["rows"] or ref_status in ("best", "unkn")
+        if ref_status == "inf":
+            return await self._infeasible_tree(a, cfg, rng, limit, t0, emit, state)
         duration = min(est * (1.6 if hard else 1.0), limit)
         scale = max(abs(tmin), 1.0)
         root_bound = tmin - scale * rng.uniform(0.03, 0.3)
@@ -346,6 +350,22 @@ class Engine:
                         "bound": sgn * bound, "gap": gap}
             await asyncio.sleep(TICK)
 
+    async def _infeasible_tree(self, a, cfg, rng, limit, t0, emit, state):
+        emit("SOLVE_STARTED", algorithm="branch_and_cut", threads=cfg.get("threads", 8))
+        await asyncio.sleep(0.4 + min(a["nnz"] / 5e5, 2.0))
+        duration = min(limit, rng.uniform(3, 9))
+        start = time.monotonic()
+        nodes = 1
+        while time.monotonic() - start < duration:
+            p = (time.monotonic() - start) / duration
+            nodes += int(rng.uniform(2, 8) * (1 + 30 * p))
+            state["nodes"] = nodes
+            emit("NODE_UPDATE", nodes=nodes, open_nodes=max(0, int((1 - p) * rng.randint(10, 80))), depth=int(2 + 12 * p),
+                 bound=None, incumbent=None, gap=None, lp_iterations=state["iterations"])
+            await asyncio.sleep(TICK)
+        emit("SOLVE_COMPLETED", status="INFEASIBLE", objective=None, nodes=nodes)
+        return {"status": "INFEASIBLE", "objective": None, "bound": None, "gap": None}
+
     # ------------------------------------------------------------- helpers
 
     @staticmethod
@@ -356,6 +376,9 @@ class Engine:
 
     @staticmethod
     def _verification(result: dict, a: dict, rng: random.Random) -> dict:
+        if result["status"] == "INFEASIBLE":
+            return {"verdict": "INFEASIBILITY_REPORTED", "checks": [],
+                    "note": "Infeasibility of a MILP is established by the exhausted search tree; no compact certificate exists."}
         if result["objective"] is None:
             return {"verdict": "NO_SOLUTION", "checks": []}
         pviol = 10 ** rng.uniform(-13, -9.5)

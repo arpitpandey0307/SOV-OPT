@@ -42,7 +42,21 @@ See [docs/tasks/00-OVERVIEW.md](docs/tasks/00-OVERVIEW.md).
 
 Datasets: see [docs/DATASETS.md](docs/DATASETS.md).
 
-## Build
+## Run the platform
+
+```bash
+# 1. API (Python 3.11+)
+cd backend && pip install -r requirements.txt
+uvicorn app.main:app --port 8000
+
+# 2. Web (Node 20+)
+cd frontend && npm install && npm run dev
+```
+
+Open http://localhost:3000. Benchmark files are read from `Dataset/` at the repository root
+(git-ignored). See [docs/DATASETS.md](docs/DATASETS.md) for the expected layout.
+
+## Build the solver core
 
 Requirements: CMake ≥ 3.24, Ninja, a C++20 compiler (GCC ≥ 11, Clang ≥ 14, MSVC 2022).
 The optional GPU path needs CUDA ≥ 12.8 (required for RTX 50-series / Blackwell).

@@ -55,6 +55,8 @@ class Instance:
     integer_cols: int | None = None
     reference_objective: float | None = None
     reference_source: str | None = None
+    # opt = proven optimal, best = best known (open), inf = infeasible, unbd = unbounded
+    reference_status: str | None = None
     analyzable: bool = True
     meta: dict = field(default_factory=dict)
 
@@ -111,6 +113,7 @@ class Catalog:
                 rows=int(nums[0]) - 1 if nums else None,
                 cols=int(nums[1]) if len(nums) > 1 else None,
                 reference_objective=NETLIB_REFERENCE.get(name),
+                reference_status="opt" if name in NETLIB_REFERENCE else None,
                 reference_source="Netlib LP readme" if name in NETLIB_REFERENCE else None,
                 analyzable=mps.exists(),
             )
@@ -123,10 +126,11 @@ class Catalog:
         out = []
         for f in sorted(d.glob("*.mps.gz")):
             name = f.name[: -len(".mps.gz")]
-            ref = refs.get(name)
+            status, value = refs.get(name, (None, None))
             out.append(Instance(
                 collection="miplib2017", name=name, path=str(f), size_bytes=f.stat().st_size, kind="MILP",
-                reference_objective=ref, reference_source="MIPLIB 2017 solu file" if ref is not None else None,
+                reference_objective=value, reference_status=status,
+                reference_source="MIPLIB 2017 solu file" if status else None,
             ))
         return out
 
@@ -158,7 +162,8 @@ class Catalog:
                     size_bytes=qfile.stat().st_size if qfile else 0, kind=kind,
                     rows=int(row["ncons"]), cols=int(row["nvars"]), nnz=int(row["nz"]) if row["nz"] else None,
                     integer_cols=ints,
-                    reference_objective=refs.get(name),
+                    reference_objective=refs.get(name, (None, None))[1],
+                    reference_status=refs.get(name, (None, None))[0],
                     reference_source="QPLIB solu file" if name in refs else None,
                     analyzable=False,
                     meta={
@@ -183,19 +188,25 @@ class Catalog:
         return out
 
     @staticmethod
-    def _load_solu(paths) -> dict[str, float]:
-        refs: dict[str, float] = {}
+    def _load_solu(paths) -> dict[str, tuple[str, float | None]]:
+        """Parse .solu files: `=opt= name value`, `=best= name value`, `=inf= name`, ..."""
+        refs: dict[str, tuple[str, float | None]] = {}
         for p in paths:
             p = Path(p)
             if not p.exists():
                 continue
             for line in p.read_text(errors="replace").splitlines():
                 tok = line.split()
-                if len(tok) >= 3 and tok[0] in ("=opt=", "=best="):
+                if len(tok) < 2 or not (tok[0].startswith("=") and tok[0].endswith("=")):
+                    continue
+                status = tok[0].strip("=")
+                value = None
+                if status in ("opt", "best") and len(tok) >= 3:
                     try:
-                        refs[tok[1]] = float(tok[2])
+                        value = float(tok[2])
                     except ValueError:
-                        pass
+                        continue
+                refs[tok[1]] = (status, value)
         return refs
 
     # ---------------------------------------------------------------- queries
@@ -226,7 +237,7 @@ class Catalog:
                 "id": cid, **meta,
                 "count": len(members),
                 "analyzed": sum(1 for i in members if self._analysis_state.get(i.key) == "ready"),
-                "with_reference": sum(1 for i in members if i.reference_objective is not None),
+                "with_reference": sum(1 for i in members if i.reference_status is not None),
                 "size_bytes": sum(i.size_bytes for i in members),
             })
         return out

@@ -220,6 +220,7 @@ def get_run(run_id: str):
     inst = catalog.get(run["collection"], run["instance"])
     run["reference_objective"] = inst.reference_objective if inst else None
     run["reference_source"] = inst.reference_source if inst else None
+    run["reference_status"] = inst.reference_status if inst else None
     return run
 
 
@@ -304,6 +305,7 @@ def _passport(run: dict) -> dict:
         "verification": run["verification"],
         "reference": {
             "objective": inst.reference_objective if inst else None,
+            "status": inst.reference_status if inst else None,
             "source": inst.reference_source if inst else None,
         },
         "timestamps": {"created": run["created_at"], "started": run["started_at"], "finished": run["finished_at"]},
