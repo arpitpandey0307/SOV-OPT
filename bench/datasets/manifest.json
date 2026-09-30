@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "note": "Checksums are pinned on first successful fetch. Data is downloaded into bench/data/ and never committed.",
+  "datasets": [
+    {
+      "name": "netlib",
+      "type": "LP",
+      "priority": "P0",
+      "base_url": "https://www.netlib.org/lp/data/",
+      "format": "emps",
+      "reference": "https://www.netlib.org/lp/data/readme",
+      "target_dir": "bench/data/netlib"
+    },
+    {
+      "name": "netlib_infeas",
+      "type": "LP",
+      "priority": "P0",
+      "base_url": "https://www.netlib.org/lp/infeas/",
+      "format": "emps",
+      "target_dir": "bench/data/netlib_infeas"
+    },
+    {
+      "name": "kennington",
+      "type": "LP",
+      "priority": "P1",
+      "base_url": "https://www.netlib.org/lp/data/kennington/",
+      "format": "emps",
+      "target_dir": "bench/data/kennington"
+    },
+    {
+      "name": "miplib2017",
+      "type": "MILP",
+      "priority": "P0",
+      "base_url": "https://miplib.zib.de/",
+      "format": "mps.gz",
+      "subset_file": "bench/datasets/miplib_subset.txt",
+      "target_dir": "bench/data/miplib2017"
+    },
+    {
+      "name": "maros_meszaros",
+      "type": "QP",
+      "priority": "P1",
+      "base_url": null,
+      "format": "qps",
+      "target_dir": "bench/data/maros_meszaros"
+    },
+    {
+      "name": "qplib",
+      "type": "QP",
+      "priority": "P1",
+      "base_url": "https://qplib.zib.de/",
+      "format": "qplib/lp",
+      "target_dir": "bench/data/qplib"
+    },
+    {
+      "name": "mittelmann_lp",
+      "type": "LP",
+      "priority": "P2",
+      "base_url": "https://plato.asu.edu/bench.html",
+      "format": "mps",
+      "target_dir": "bench/data/mittelmann"
+    }
+  ]
+}

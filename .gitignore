@@ -1,0 +1,47 @@
+# Build
+build/
+out/
+cmake-build-*/
+CMakeUserPresets.json
+compile_commands.json
+
+# Datasets (fetched by scripts, never committed)
+bench/data/
+*.mps
+*.mps.gz
+*.qps
+*.lp
+*.sol
+!models/**/*.mps
+!models/**/*.lp
+!solver/tests/data/**
+
+# Benchmark outputs
+bench/reports/*
+!bench/reports/.gitkeep
+*.evidence.zip
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# Node
+node_modules/
+.next/
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
