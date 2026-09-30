@@ -279,7 +279,8 @@ function RunMeta({ run, stream, algorithm }: { run: Run; stream: StreamState; al
     <span className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-3">
       <span>{algorithm ? label(algorithm) : "Selecting algorithm"}</span>
       <span>
-        Time budget {run.config.time_limit}s · seed {run.config.seed} · {run.config.gpu ? "GPU on" : "CPU only"}
+        Time budget {run.config.time_limit}s · seed {run.config.seed} ·{" "}
+        {run.engine === "sovopt-native" ? "CPU simplex" : run.config.gpu ? "GPU on" : "CPU only"}
       </span>
       <span className="flex items-center gap-1.5">
         <span
